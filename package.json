@@ -1,0 +1,55 @@
+{
+	"name": "snackbuzz",
+	"description": "A library for snackbar notifications",
+	"version": "0.0.0",
+	"author": "IdoBouskila",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/IdoBouskila/snackbuzz"
+	},
+	"type": "module",
+	"main": "dist/index.cjs",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.cjs",
+			"types": "./dist/index.d.ts"
+		},
+		"./package.json": "./package.json"
+	},
+	"files": [
+		"README.md",
+		"CHANGELOG.md",
+		"/dist",
+		"/src",
+		"!**/__tests__"
+	],
+	"scripts": {
+		"test": "vitest",
+		"test:coverage": "vitest run --coverage",
+		"format": "prettier --write ./",
+		"format:check": "prettier --check ./",
+		"release": "npm run build && changeset publish",
+		"build": "tsup src/index.ts --format cjs,esm --dts",
+		"lint": "concurrently -n eslint,tsc -c magenta,blue 'eslint ./' 'tsc'"
+	},
+	"devDependencies": {
+		"@changesets/cli": "^2.28.1",
+		"@eslint/js": "^9.22.0",
+		"@types/eslint__js": "^8.42.3",
+		"@types/node": "^22.13.11",
+		"@vitest/coverage-v8": "^3.0.9",
+		"concurrently": "^9.1.2",
+		"eslint": "^9.22.0",
+		"eslint-plugin-perfectionist": "^4.10.1",
+		"globals": "^16.0.0",
+		"prettier": "^3.5.3",
+		"tsup": "^8.4.0",
+		"typescript": "^5.8.2",
+		"typescript-eslint": "^8.27.0",
+		"vitest": "^3.0.9"
+	}
+}

@@ -41,11 +41,10 @@ export class SnackBuzzCore implements NotificationManager {
 			return;
 		}
 
-		// Remove notifications with matching key prefix: for example, if the key is
-		// Inspired by `@tanstack/react-query` queryKey mechanism
+		// Remove notifications with matching key prefix (Inspired by `@tanstack/react-query` `queryKey` mechanism)
 		this.store.notifications = this.store.notifications.filter(
 			(notification) => {
-				if (!notification.key) return true;
+				if (!notification.key.length) return true;
 
 				return !isKeyPrefixMatch(notificationKey, notification.key);
 			},
@@ -53,17 +52,24 @@ export class SnackBuzzCore implements NotificationManager {
 	}
 
 	private dequeueAfterDuration(
-		notification: Notification & { duration: number },
+		notification: NotificationStore['notifications'][number],
 	): void {
+		if (notification.duration === 'persist') {
+			return;
+		}
+
 		setTimeout(() => {
-			this.dequeue(notification.key);
+			this.setNotificationDismissed(notification.key);
 		}, notification.duration);
 	}
 
 	enqueue(message: string, options: NotificationOptions): NotificationKey {
+		const id = crypto.randomUUID();
+
 		const {
-			key = [],
+			key = [id],
 			variant = 'success',
+			placement = this.store.options.placement,
 			duration = this.store.options.defaultDuration,
 		} = options;
 
@@ -76,29 +82,43 @@ export class SnackBuzzCore implements NotificationManager {
 			this.store.options.maxNotifications;
 
 		if (isMaxNotificationsReached) {
-			this.store.notifications.shift();
+			this.store.notifications = this.store.notifications.slice(1);
 		}
 
-		const notification: Notification = {
+		const notification = {
 			key,
 			message,
 			variant,
+			placement,
 			duration: duration,
 			createdAt: Date.now(),
-			id: crypto.randomUUID(),
-		};
+		} satisfies Notification;
 
 		this.store.notifications = [...this.store.notifications, notification];
 
-		if (notification.duration === 'persist') {
-			return key;
-		}
+		this.dequeueAfterDuration(notification);
 
 		this.notify();
 
 		return key;
 	}
 
+	setNotificationDismissed(key: NotificationKey): void {
+		this.store.notifications = this.store.notifications.map(
+			(notification) => {
+				if (!isKeyPrefixMatch(key, notification.key)) {
+					return notification;
+				}
+
+				return {
+					...notification,
+					isDismissed: true,
+				};
+			},
+		);
+
+		this.notify();
+	}
 
 	dequeue(key?: NotificationKey): void {
 		this.removeNotifications(key);

@@ -1,4 +1,3 @@
-import { isKeyPrefixMatch } from './utils';
 import type {
 	Notification,
 	NotificationKey,
@@ -6,8 +5,9 @@ import type {
 	NotificationOptions,
 	NotificationStore,
 } from './types';
+import { isKeyPrefixMatch } from './utils';
 
-const defaultStoreOptions: NotificationStore['options'] = {
+export const defaultStoreOptions: NotificationStore['options'] = {
 	maxNotifications: 3,
 	defaultDuration: 3000,
 	preventDuplicates: false,
@@ -69,7 +69,6 @@ export class SnackBuzzCore implements NotificationManager {
 		const {
 			key = [id],
 			variant = 'success',
-			placement = this.store.options.placement,
 			duration = this.store.options.defaultDuration,
 		} = options;
 
@@ -89,7 +88,6 @@ export class SnackBuzzCore implements NotificationManager {
 			key,
 			message,
 			variant,
-			placement,
 			duration: duration,
 			createdAt: Date.now(),
 		} satisfies Notification;

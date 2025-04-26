@@ -1,3 +1,4 @@
+import { isKeyPrefixMatch } from './utils';
 import type {
 	Notification,
 	NotificationKey,
@@ -5,7 +6,6 @@ import type {
 	NotificationOptions,
 	NotificationStore,
 } from './types';
-import { isKeyPrefixMatch } from './utils';
 
 export const defaultStoreOptions: NotificationStore['options'] = {
 	maxNotifications: 3,
@@ -29,13 +29,13 @@ export class SnackBuzzCore implements NotificationManager {
 		this.listeners.forEach((listener) => listener());
 	};
 
-	private isDuplicate(message: string): boolean {
+	private isDuplicate = (message: string): boolean => {
 		return this.store.notifications.some(
 			(notification) => notification.message === message,
 		);
-	}
+	};
 
-	private removeNotifications(notificationKey?: NotificationKey) {
+	private removeNotifications = (notificationKey?: NotificationKey) => {
 		if (!notificationKey) {
 			this.store.notifications = [];
 			return;
@@ -49,11 +49,11 @@ export class SnackBuzzCore implements NotificationManager {
 				return !isKeyPrefixMatch(notificationKey, notification.key);
 			},
 		);
-	}
+	};
 
-	private dequeueAfterDuration(
+	private dequeueAfterDuration = (
 		notification: NotificationStore['notifications'][number],
-	): void {
+	): void => {
 		if (notification.duration === 'persist') {
 			return;
 		}
@@ -61,9 +61,12 @@ export class SnackBuzzCore implements NotificationManager {
 		setTimeout(() => {
 			this.setNotificationDismissed(notification.key);
 		}, notification.duration);
-	}
+	};
 
-	enqueue(message: string, options: NotificationOptions): NotificationKey {
+	enqueue = (
+		message: string,
+		options: NotificationOptions,
+	): NotificationKey => {
 		const id = crypto.randomUUID();
 
 		const {
@@ -99,9 +102,9 @@ export class SnackBuzzCore implements NotificationManager {
 		this.notify();
 
 		return key;
-	}
+	};
 
-	setNotificationDismissed(key: NotificationKey): void {
+	setNotificationDismissed = (key: NotificationKey): void => {
 		this.store.notifications = this.store.notifications.map(
 			(notification) => {
 				if (!isKeyPrefixMatch(key, notification.key)) {
@@ -116,29 +119,35 @@ export class SnackBuzzCore implements NotificationManager {
 		);
 
 		this.notify();
-	}
+	};
 
-	dequeue(key?: NotificationKey): void {
+	dequeue = (key?: NotificationKey): void => {
 		this.removeNotifications(key);
 
 		this.notify();
-	}
+	};
 
-	clear(): void {
+	clear = (): void => {
 		this.store.notifications = [];
 
 		this.notify();
-	}
+	};
 
-	getNotifications(): NotificationStore['notifications'] {
+	getNotifications = (): NotificationStore['notifications'] => {
 		return this.store.notifications;
-	}
+	};
 
-	subscribe(listener: () => void) {
+	subscribe = (listener: () => void) => {
 		this.listeners.add(listener);
 
 		return () => {
 			this.listeners.delete(listener);
 		};
-	}
+	};
+
+	setOptions = (options: Partial<NotificationStore['options']>): void => {
+		this.store.options = { ...this.store.options, ...options };
+
+		this.notify();
+	};
 }

@@ -14,17 +14,15 @@ export type NotificationOptions = {
 	key?: NotificationKey;
 	variant: NotificationVariant;
 	duration?: number | 'persist';
-	placement?: NotificationPlacement;
 };
 
 export type Notification = NotificationOptions & {
-	id: string;
 	message: string;
 	createdAt: number;
 };
 
 export type NotificationStore = {
-	notifications: Notification[];
+	notifications: (Required<Notification> & { isDismissed?: boolean })[];
 	options: {
 		defaultDuration: number;
 		maxNotifications: number;
@@ -37,5 +35,7 @@ export type NotificationManager = {
 	clear: () => void;
 	getNotifications: () => Notification[];
 	dequeue: (key?: NotificationKey) => void;
+	setNotificationDismissed: (key: NotificationKey) => void;
+	setOptions: (options: Partial<NotificationStore['options']>) => void;
 	enqueue: (message: string, options: NotificationOptions) => NotificationKey;
 };

@@ -28,6 +28,14 @@ export default tseslint.config(
 			'@typescript-eslint/no-non-null-assertion': 'warn',
 			'@typescript-eslint/no-confusing-void-expression': 'off',
 			'@typescript-eslint/restrict-template-expressions': 'off',
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{
+					argsIgnorePattern: '^_',
+					varsIgnorePattern: '^_',
+					caughtErrorsIgnorePattern: '^_',
+				},
+			],
 			'perfectionist/sort-imports': [
 				'error',
 				{

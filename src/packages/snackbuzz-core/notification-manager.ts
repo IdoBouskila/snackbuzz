@@ -16,6 +16,7 @@ const defaultStoreOptions: NotificationStore['options'] = {
 
 export class SnackBuzzCore implements NotificationManager {
 	private store: NotificationStore;
+	private listeners = new Set<() => void>();
 
 	constructor(options: Partial<NotificationStore['options']> = {}) {
 		this.store = {
@@ -23,6 +24,10 @@ export class SnackBuzzCore implements NotificationManager {
 			options: { ...defaultStoreOptions, ...options },
 		};
 	}
+
+	private notify = () => {
+		this.listeners.forEach((listener) => listener());
+	};
 
 	private isDuplicate(message: string): boolean {
 		return this.store.notifications.some(
@@ -83,30 +88,39 @@ export class SnackBuzzCore implements NotificationManager {
 			id: crypto.randomUUID(),
 		};
 
-		this.store.notifications.push(notification);
+		this.store.notifications = [...this.store.notifications, notification];
 
 		if (notification.duration === 'persist') {
 			return key;
 		}
 
-		this.dequeueAfterDuration({
-			...notification,
-			duration:
-				notification.duration ?? this.store.options.defaultDuration,
-		});
+		this.notify();
 
 		return key;
 	}
 
+
 	dequeue(key?: NotificationKey): void {
 		this.removeNotifications(key);
+
+		this.notify();
 	}
 
 	clear(): void {
 		this.store.notifications = [];
+
+		this.notify();
 	}
 
-	getNotifications(): Notification[] {
-		return [...this.store.notifications];
+	getNotifications(): NotificationStore['notifications'] {
+		return this.store.notifications;
+	}
+
+	subscribe(listener: () => void) {
+		this.listeners.add(listener);
+
+		return () => {
+			this.listeners.delete(listener);
+		};
 	}
 }

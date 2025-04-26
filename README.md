@@ -6,8 +6,6 @@ A small weight & simple notification library 🔥
 > Currently, React is the only supported UI framework (maybe more in the future)
 > DEMO will be available soon 🔜
 
----
-
 ## Features
 
 - Comes with a beautiful UI ready to go with dark / light theme support ✨
@@ -15,8 +13,6 @@ A small weight & simple notification library 🔥
 - Built-in support for different variants (success, error, info, warning).
 - No need to wrap your app with a <Provider /> or drop a <Toaster /> somewhere — just call and place your toasts wherever you like. Super simple.
 - Nice options built-in: max notifications, default duration, prevent duplicates, and placement control
-
----
 
 ## Getting Started
 
@@ -26,8 +22,6 @@ A small weight & simple notification library 🔥
 ```bash
 npm install react-snackbuzz
 ```
-
----
 
 ## Usage (React)
 
@@ -45,7 +39,10 @@ function App() {
   return (
     <button
       onClick={() =>
-        snackbuzz.enqueue('Hi from SnackBuzz!', { variant: 'info' })
+        snackbuzz.enqueue('Hi from SnackBuzz!', {
+          variant: 'info',
+          duration: 4000 /* You can override the default here! */,
+        })
       }
     >
       Show Snack
@@ -69,7 +66,7 @@ You can pass options to `useSnackBuzz` for stuff like placement, max notificatio
 - `preventDuplicates` (bool): Block repeat messages
 - `placement` (string): Where to put your snacks (UI decides what this means)
 
-### Roadmap
+## Roadmap
 
 - Demo site
 - Custom toasts

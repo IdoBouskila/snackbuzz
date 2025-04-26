@@ -17,7 +17,7 @@ A small weight & simple notification library 🔥
 ## Getting Started
 
 > [!NOTE]
-> The package doesn't publish yet 🔜
+> The package hasn't been published yet 🔜
 
 ```bash
 npm install react-snackbuzz
@@ -30,9 +30,9 @@ import { useSnackBuzz } from 'react-snackbuzz';
 
 function App() {
   const snackbuzz = useSnackBuzz({
-    placement: 'top-right',
     maxNotifications: 3,
     defaultDuration: 3000,
+    placement: 'top-right',
     preventDuplicates: true,
   });
 
